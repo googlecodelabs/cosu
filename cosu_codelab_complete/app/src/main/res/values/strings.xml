@@ -1,0 +1,31 @@
+<!--
+ Copyright 2016 Google Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+      http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<resources>
+    <string name="app_name">CosuCodelab</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_locked">LockedActivity</string>
+    <string name="pic_button">Take picture</string>
+    <string name="lock_button">Start Lock Task Mode</string>
+    <string name="no_camera_apps">No camera apps available to capture photo</string>
+    <string name="main_image_description">Pictures taken will be displayed here</string>
+    <string name="lock_image_description">Pictures taken will be displayed here</string>
+    <string name="stop_lock_button">Stop lock task mode</string>
+    <string name="not_lock_whitelisted">This app has not been given Device Owner
+        privileges to manage this device and start lock task mode</string>
+    <string name="not_device_owner">This app is not set as device owner
+        and cannot start lock task mode</string>
+</resources>
