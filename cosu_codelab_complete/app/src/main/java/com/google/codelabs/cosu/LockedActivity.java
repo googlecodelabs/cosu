@@ -110,41 +110,11 @@ public class LockedActivity extends Activity {
         if(mDevicePolicyManager.isLockTaskPermitted(this.getPackageName())){
             ActivityManager am = (ActivityManager) getSystemService(
                     Context.ACTIVITY_SERVICE);
-
-            // ActivityManager.getLockTaskModeState api is not available in pre-M.
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                if (!am.isInLockTaskMode()) {
-                    startLockTask();
-                }
-            } else {
-                if (am.getLockTaskModeState() ==
-                        ActivityManager.LOCK_TASK_MODE_NONE) {
-                    startLockTask();
-                }
+            if(am.getLockTaskModeState() ==
+                    ActivityManager.LOCK_TASK_MODE_NONE) {
+                startLockTask();
             }
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_locked, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

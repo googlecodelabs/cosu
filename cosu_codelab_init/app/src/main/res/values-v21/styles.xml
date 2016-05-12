@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
  Copyright 2016 Google Inc.
  
@@ -14,7 +15,7 @@
  limitations under the License.
 -->
 
-<?xml version="1.0" encoding="utf-8"?>
+
 <resources>
     <style name="AppTheme" parent="android:Theme.Material.Light">
     </style>
