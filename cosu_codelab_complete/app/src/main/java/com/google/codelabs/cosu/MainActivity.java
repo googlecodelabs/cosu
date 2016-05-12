@@ -65,8 +65,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mPackageManager = this.getPackageManager();
-
         takePicButton = (Button) findViewById(R.id.pic_button);
         takePicButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +97,8 @@ public class MainActivity extends Activity {
 
         mAdminComponentName = DeviceAdminReceiver.getComponentName(this);
 
+        mPackageManager = this.getPackageManager();
+
         lockTaskButton = (Button) findViewById(R.id.start_lock_button);
         lockTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,7 +110,8 @@ public class MainActivity extends Activity {
                     lockIntent.putExtra(EXTRA_FILEPATH,mCurrentPhotoPath);
 
                     mPackageManager.setComponentEnabledSetting(
-                            new ComponentName(getApplicationContext(), LockedActivity.class),
+                            new ComponentName(getApplicationContext(),
+                                    LockedActivity.class),
                             PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                             PackageManager.DONT_KILL_APP);
                     startActivity(lockIntent);

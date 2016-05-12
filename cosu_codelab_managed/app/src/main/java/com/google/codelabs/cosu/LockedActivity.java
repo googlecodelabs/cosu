@@ -105,7 +105,8 @@ public class LockedActivity extends Activity {
         imageView = (ImageView) findViewById(R.id.lock_imageView);
         Intent intent = getIntent();
 
-        String passedPhotoPath = intent.getStringExtra(MainActivity.EXTRA_FILEPATH);
+        String passedPhotoPath = intent.getStringExtra(
+                MainActivity.EXTRA_FILEPATH);
         if (passedPhotoPath != null) {
             mCurrentPhotoPath = passedPhotoPath;
         } else {
@@ -131,7 +132,8 @@ public class LockedActivity extends Activity {
             bmOptions.inJustDecodeBounds = false;
             bmOptions.inSampleSize = scaleFactor;
 
-            Bitmap imageBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+            Bitmap imageBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath,
+                    bmOptions);
             imageView.setImageBitmap(imageBitmap);
         }
     }
