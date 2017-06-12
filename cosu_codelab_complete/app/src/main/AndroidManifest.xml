@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
  Copyright 2016 Google Inc.
  
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,17 +15,17 @@
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.google.codelabs.cosu" >
+    package="com.google.codelabs.cosu">
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
 
         <activity
             android:name="com.google.codelabs.cosu.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,12 +35,13 @@
 
         <activity
             android:name="com.google.codelabs.cosu.LockedActivity"
-            android:label="@string/title_activity_locked"
-            android:enabled="false">
+            android:enabled="false"
+            android:label="@string/title_activity_locked">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.HOME"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
@@ -54,16 +54,15 @@
                 android:name="android.app.device_admin"
                 android:resource="@xml/device_admin_receiver" />
             <intent-filter>
-                <action android:name="android.intent.action.DEVICE_ADMIN_ENABLED"/>
-                <action android:name="android.intent.action.PROFILE_PROVISIONING_COMPLETE"/>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.DEVICE_ADMIN_ENABLED" />
+                <action android:name="android.intent.action.PROFILE_PROVISIONING_COMPLETE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
     </application>
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
 
 
 </manifest>

@@ -25,21 +25,18 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.List;
+
+import pl.aprilapps.easyphotopicker.DefaultCallback;
+import pl.aprilapps.easyphotopicker.EasyImage;
 
 public class MainActivity extends Activity {
 
@@ -53,9 +50,7 @@ public class MainActivity extends Activity {
     private DevicePolicyManager mDevicePolicyManager;
     private ComponentName mAdminComponentName;
 
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 2;
-    private static final String FILE_TAG = "File Creation";
 
     public static final String EXTRA_FILEPATH =
             "com.google.codelabs.cosu.EXTRA_FILEPATH";
@@ -69,26 +64,7 @@ public class MainActivity extends Activity {
         takePicButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    File photoFile=null;
-                    try{
-                        photoFile = createImageFile();
-                    } catch (IOException e) {
-                        Log.e(FILE_TAG,e.getMessage());
-                    }
-                    if (photoFile != null) {
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                Uri.fromFile(photoFile));
-                        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-                    }
-                }
-                else{
-                    Toast.makeText(
-                            getApplicationContext(),R.string.no_camera_apps,
-                            Toast.LENGTH_SHORT)
-                            .show();
-                }
+                EasyImage.openCamera(MainActivity.this, 0);
             }
         });
 
@@ -103,11 +79,11 @@ public class MainActivity extends Activity {
         lockTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if ( mDevicePolicyManager.isDeviceOwnerApp(
+                if (mDevicePolicyManager.isDeviceOwnerApp(
                         getApplicationContext().getPackageName())) {
                     Intent lockIntent = new Intent(getApplicationContext(),
                             LockedActivity.class);
-                    lockIntent.putExtra(EXTRA_FILEPATH,mCurrentPhotoPath);
+                    lockIntent.putExtra(EXTRA_FILEPATH, mCurrentPhotoPath);
 
                     mPackageManager.setComponentEnabledSetting(
                             new ComponentName(getApplicationContext(),
@@ -118,7 +94,7 @@ public class MainActivity extends Activity {
                     finish();
                 } else {
                     Toast.makeText(getApplicationContext(),
-                            R.string.not_lock_whitelisted,Toast.LENGTH_SHORT)
+                            R.string.not_lock_whitelisted, Toast.LENGTH_SHORT)
                             .show();
                 }
             }
@@ -134,7 +110,7 @@ public class MainActivity extends Activity {
 
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                    new String []{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
         }
 
@@ -142,10 +118,10 @@ public class MainActivity extends Activity {
 
         Intent intent = getIntent();
 
-        if(intent.getIntExtra(LockedActivity.LOCK_ACTIVITY_KEY,0) ==
-               LockedActivity.FROM_LOCK_ACTIVITY){
+        if (intent.getIntExtra(LockedActivity.LOCK_ACTIVITY_KEY, 0) ==
+                LockedActivity.FROM_LOCK_ACTIVITY) {
             mDevicePolicyManager.clearPackagePersistentPreferredActivities(
-                    mAdminComponentName,getPackageName());
+                    mAdminComponentName, getPackageName());
             mPackageManager.setComponentEnabledSetting(
                     new ComponentName(getApplicationContext(), LockedActivity.class),
                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
@@ -153,45 +129,37 @@ public class MainActivity extends Activity {
         }
     }
 
-    private File createImageFile() throws IOException {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        //Check for storage permission
-        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-            // Create an image file name
-            String timeStamp =
-                    new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String imageFileName = "JPEG_" + timeStamp + "_";
-            File storageDir = getApplicationContext().getExternalFilesDir(
-                    null);
-            File image = File.createTempFile(
-                    imageFileName,  /* prefix */
-                    ".jpg",         /* suffix */
-                    storageDir      /* directory */
-            );
-            // Save a file: path for use with ACTION_VIEW intents
-            mCurrentPhotoPath = image.getAbsolutePath();
-            return image;
-        }
-        return null;
+        EasyImage.handleActivityResult(requestCode, resultCode, data, this, new DefaultCallback() {
+            @Override
+            public void onImagePickerError(Exception e, EasyImage.ImageSource source, int type) {
+                //Some error handling
+            }
+
+            @Override
+            public void onImagesPicked(List<File> imagesFiles, EasyImage.ImageSource source, int type) {
+                //Handle the images
+                onPhotosReturned(imagesFiles);
+            }
+        });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode,
-            int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            setImageToView();
-        }
+    private void onPhotosReturned(List<File> imagesFiles) {
+        setImageToView(imagesFiles.get(0));
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-            String permissions[], int[] grantResults) {
+                                           String permissions[], int[] grantResults) {
         switch (requestCode) {
             case PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
                 // If request is cancelled, results array is empty
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    permissionCheck=grantResults[0];
+                    permissionCheck = grantResults[0];
                 } else {
                     takePicButton.setEnabled(false);
                 }
@@ -200,11 +168,11 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void setImageToView(){
-        //Save the file in gallery
+    private void setImageToView(File f) {
+        mCurrentPhotoPath = f.getAbsolutePath();
 
+        //Save the file in gallery
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(mCurrentPhotoPath);
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         this.sendBroadcast(mediaScanIntent);
@@ -223,9 +191,8 @@ public class MainActivity extends Activity {
         int photoW = bmOptions.outWidth;
 
         // Determine how much to scale down image
-        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-
-
+        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+        
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
         bmOptions.inSampleSize = scaleFactor;

@@ -27,12 +27,9 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.BatteryManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.UserManager;
 import android.provider.Settings;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -69,7 +66,7 @@ public class LockedActivity extends Activity {
                         Context.ACTIVITY_SERVICE);
 
                 if (am.getLockTaskModeState() ==
-                            ActivityManager.LOCK_TASK_MODE_LOCKED) {
+                        ActivityManager.LOCK_TASK_MODE_LOCKED) {
                     stopLockTask();
                 }
 
@@ -78,7 +75,7 @@ public class LockedActivity extends Activity {
                 Intent intent = new Intent(
                         getApplicationContext(), MainActivity.class);
 
-                intent.putExtra(LOCK_ACTIVITY_KEY,FROM_LOCK_ACTIVITY);
+                intent.putExtra(LOCK_ACTIVITY_KEY, FROM_LOCK_ACTIVITY);
                 startActivity(intent);
                 finish();
             }
@@ -92,12 +89,11 @@ public class LockedActivity extends Activity {
         mDevicePolicyManager = (DevicePolicyManager) getSystemService(
                 Context.DEVICE_POLICY_SERVICE);
         mPackageManager = getPackageManager();
-        if(mDevicePolicyManager.isDeviceOwnerApp(getPackageName())){
+        if (mDevicePolicyManager.isDeviceOwnerApp(getPackageName())) {
             setDefaultCosuPolicies(true);
-        }
-        else {
+        } else {
             Toast.makeText(getApplicationContext(),
-                    R.string.not_device_owner,Toast.LENGTH_SHORT)
+                    R.string.not_device_owner, Toast.LENGTH_SHORT)
                     .show();
         }
     }
@@ -107,10 +103,10 @@ public class LockedActivity extends Activity {
         super.onStart();
 
         // start lock task mode if its not already active
-        if(mDevicePolicyManager.isLockTaskPermitted(this.getPackageName())){
+        if (mDevicePolicyManager.isLockTaskPermitted(this.getPackageName())) {
             ActivityManager am = (ActivityManager) getSystemService(
                     Context.ACTIVITY_SERVICE);
-            if(am.getLockTaskModeState() ==
+            if (am.getLockTaskModeState() ==
                     ActivityManager.LOCK_TASK_MODE_NONE) {
                 startLockTask();
             }
@@ -118,7 +114,7 @@ public class LockedActivity extends Activity {
     }
 
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onStop();
 
         // get editor object and make preference changes to save photo filepath
@@ -128,7 +124,7 @@ public class LockedActivity extends Activity {
         editor.commit();
     }
 
-    private void setImageToView(){
+    private void setImageToView() {
         // Restore preferences
         SharedPreferences settings = getSharedPreferences(PREFS_FILE_NAME, 0);
         String savedPhotoPath = settings.getString(PHOTO_PATH, null);
@@ -158,7 +154,7 @@ public class LockedActivity extends Activity {
             int photoW = bmOptions.outWidth;
 
             // Determine how much to scale down image
-            int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+            int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
 
             // Decode the image file into a Bitmap sized to fill the View
             bmOptions.inJustDecodeBounds = false;
@@ -170,7 +166,7 @@ public class LockedActivity extends Activity {
         }
     }
 
-    private void setDefaultCosuPolicies(boolean active){
+    private void setDefaultCosuPolicies(boolean active) {
         // set user restrictions
         setUserRestriction(UserManager.DISALLOW_SAFE_BOOT, active);
         setUserRestriction(UserManager.DISALLOW_FACTORY_RESET, active);
@@ -186,7 +182,7 @@ public class LockedActivity extends Activity {
         enableStayOnWhilePluggedIn(active);
 
         // set system update policy
-        if (active){
+        if (active) {
             mDevicePolicyManager.setSystemUpdatePolicy(mAdminComponentName,
                     SystemUpdatePolicy.createWindowedInstallPolicy(60, 120));
         } else {
@@ -215,7 +211,7 @@ public class LockedActivity extends Activity {
         }
     }
 
-    private void setUserRestriction(String restriction, boolean disallow){
+    private void setUserRestriction(String restriction, boolean disallow) {
         if (disallow) {
             mDevicePolicyManager.addUserRestriction(mAdminComponentName,
                     restriction);
@@ -225,20 +221,20 @@ public class LockedActivity extends Activity {
         }
     }
 
-    private void enableStayOnWhilePluggedIn(boolean enabled){
+    private void enableStayOnWhilePluggedIn(boolean enabled) {
         if (enabled) {
             mDevicePolicyManager.setGlobalSetting(
                     mAdminComponentName,
                     Settings.Global.STAY_ON_WHILE_PLUGGED_IN,
                     Integer.toString(BatteryManager.BATTERY_PLUGGED_AC
-                        | BatteryManager.BATTERY_PLUGGED_USB
-                        | BatteryManager.BATTERY_PLUGGED_WIRELESS));
+                            | BatteryManager.BATTERY_PLUGGED_USB
+                            | BatteryManager.BATTERY_PLUGGED_WIRELESS));
         } else {
             mDevicePolicyManager.setGlobalSetting(
                     mAdminComponentName,
                     Settings.Global.STAY_ON_WHILE_PLUGGED_IN,
                     "0"
-                    );
+            );
         }
     }
 }
