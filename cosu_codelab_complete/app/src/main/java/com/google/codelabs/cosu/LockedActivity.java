@@ -68,7 +68,7 @@ public class LockedActivity extends Activity {
                 ActivityManager am = (ActivityManager) getSystemService(
                         Context.ACTIVITY_SERVICE);
 
-                if (am.getLockTaskModeState() ==
+                if (am != null && am.getLockTaskModeState() ==
                             ActivityManager.LOCK_TASK_MODE_LOCKED) {
                     stopLockTask();
                 }
